@@ -13,10 +13,32 @@
       <ion-label position="floating" color="primary">Nombre</ion-label>
       <ion-input type="text" formControlName="name"></ion-input>
     </ion-item>
+    <!-- mensajes de error: Nombre -->
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.name">
+        <div class="error-message" *ngIf="validations_form.get('name').hasError(validation.type)
+  && (validations_form.get('name').dirty
+  || validations_form.get('name').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
     <ion-item>
       <ion-label position="floating" color="primary">Apellido</ion-label>
       <ion-input type="text" formControlName="lastname"></ion-input>
     </ion-item>
+    <!-- mensajes de error: Apellido -->
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.lastname">
+        <div class="error-message" *ngIf="validations_form.get('lastname').hasError(validation.type)
+&& (validations_form.get('lastname').dirty
+|| validations_form.get('lastname').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
+
 
     <ion-item>
       <ion-label position="floating" color="primary">Fecha de Nacimiento</ion-label>
@@ -25,11 +47,31 @@
         monthShortNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre">
       </ion-datetime>
     </ion-item>
+    <!-- mensajes de error: Fecha de nacimiento -->
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.birthday">
+        <div class="error-message" *ngIf="validations_form.get('birthday').hasError(validation.type)
+&& (validations_form.get('birthday').dirty
+|| validations_form.get('birthday').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
     <ion-item>
       <ion-label position="floating" color="primary">DNI</ion-label>
       <ion-input type="text" formControlName="dni"></ion-input>
     </ion-item>
+    <!-- mensajes de error: DNI -->
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validation_messages.dni">
+        <div class="error-message" *ngIf="validations_form.get('dni').hasError(validation.type)
+&& (validations_form.get('dni').dirty
+|| validations_form.get('dni').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
     <ion-button color="primary" class="submit-btn" expand="block" type="submit" [disabled]="!validations_form.valid">
       Enviar</ion-button>
