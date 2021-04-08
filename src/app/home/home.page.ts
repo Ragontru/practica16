@@ -13,6 +13,7 @@ export class HomePage implements OnInit {
 
   validations_form: FormGroup;
   dni_validation: FormGroup;
+  myDate: any;
 
   validation_messages = {
     'name': [
@@ -40,10 +41,12 @@ export class HomePage implements OnInit {
     ]
   }
 
+
+
   constructor(
     public formBuilder: FormBuilder,
-    private navCtrl: NavController
-  ) { }
+    private navCtrl: NavController,
+  ) {this.myDate = new Date()}
 
   ngOnInit() {
 
@@ -109,7 +112,7 @@ export class HomePage implements OnInit {
 
   validarUsuario(fg: FormGroup) {
 
-    var fechaNacimiento: Date = fg.controls['dni'].value;
+    var fechaNacimiento: Date = fg.controls['myDate'].value;
     var fechaActual = Math.abs(Date.now()-fechaNacimiento.getTime());
     var edad = Math.floor((fechaActual/(1000*3600*24))/365);
 
