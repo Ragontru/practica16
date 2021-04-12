@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
       { type: 'pattern', message: 'DNI debe estar formado por 8 números seguido de una letra' },
       { type: 'validDni', message: 'El DNI introducido no es válido' }
     ],
-    'usuario_form': [
+    'validations_form': [
       { type: 'validarUsuario', message: 'Debe introducir el DNI al ser mayor de edad' }
     ]
   }
@@ -46,10 +46,9 @@ export class HomePage implements OnInit {
   constructor(
     public formBuilder: FormBuilder,
     private navCtrl: NavController,
-  ) {this.myDate = new Date()}
+  ) { this.myDate = new Date() }
 
   ngOnInit() {
-
     this.validations_form = new FormGroup({
       name: new FormControl('', Validators.compose([
         Validators.minLength(2),
@@ -68,22 +67,24 @@ export class HomePage implements OnInit {
         Validators.minLength(9),
         Validators.pattern('[0-9]{8}[A-Za-z]{1}'),
         Validators.required
-      ]))
+      ])),
+    }, (formGroup: FormGroup) => {
+      return this.validarUsuario(formGroup);
     });
 
-    this.dni_validation = new FormGroup({
-      
-    })
+    this.dni_validation = this.formBuilder.group({
+      validations_form: this.validations_form
+    });
   }
 
   onSubmit(values) {
     console.log(values);
 
     let usuario: Usuario;
-    usuario = new Usuario(values['usuario_form']['name'],
-      values['usuario_form']['lastname'],
-      values['usuario_form']['birthday'],
-      values['usuario_form']['dni']);
+    usuario = new Usuario(values['validations_form']['name'],
+      values['validations_form']['lastname'],
+      values['validations_form']['birthday'],
+      values['validations_form']['dni']);
 
     let navigationExtras: NavigationExtras = {
       queryParams: {
@@ -113,16 +114,24 @@ export class HomePage implements OnInit {
   validarUsuario(fg: FormGroup) {
 
     var fechaNacimiento: Date = fg.controls['myDate'].value;
-    var fechaActual = Math.abs(Date.now()-fechaNacimiento.getTime());
-    var edad = Math.floor((fechaActual/(1000*3600*24))/365);
+    var fechaActual = Math.abs(Date.now() - fechaNacimiento.getTime());
+    var edad = Math.floor((fechaActual / (1000 * 3600 * 24)) / 365);
+    var dni: string = fg.controls['dni'].value;
 
-    
     console.log(edad);
 
-    if (edad > 18) {
-      return true;
+    if(!fechaNacimiento){
+      return {validarUsuario: true};
+    }
+
+    if (edad < 18) {
+      return null;
     } else {
-      return false;
+      if (dni == '') {
+        return { validarUsuario: true };
+      } else {
+        return null;
+      }
     }
 
   }

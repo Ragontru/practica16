@@ -8,7 +8,7 @@
 
 <ion-content padding class="form-content">
   <form [formGroup]="validations_form" (ngSubmit)="onSubmit(validations_form.value)">
-
+<div formGroupName="validations_form">
     <ion-item>
       <ion-label position="floating" color="primary">Nombre</ion-label>
       <ion-input type="text" formControlName="name"></ion-input>
@@ -72,6 +72,19 @@
         </div>
       </ng-container>
     </div>
+  </div>
+
+  <!--Validación de errores para validations_form-->
+  <div class="validation-errors">
+    <ng-container *ngFor="let validation of validation_messages.grupoDatosUsuario">
+      <div class="error-message"
+        *ngIf="dni_validation.get('grupoDatosUsuario').hasError(validation.type) 
+              && (dni_validation.get('grupoDatosUsuario').get('fechaNacimientoUsuario').dirty 
+              || dni_validation.get('grupoDatosUsuario').get('fechaNacimientoUsuario').touched)">
+        <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+      </div>
+    </ng-container>
+  </div> 
 
     <ion-button color="primary" class="submit-btn" expand="block" type="submit" [disabled]="!validations_form.valid">
       Enviar</ion-button>
