@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { NavigationExtras } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Usuario } from '../entidades/Usuario';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-home',
@@ -11,9 +12,8 @@ import { Usuario } from '../entidades/Usuario';
 })
 export class HomePage implements OnInit {
 
-  validations_form: FormGroup;
-  dni_validation: FormGroup;
-  myDate: any;
+  grupoDatosUsuario: FormGroup;
+  formulario: FormGroup;
 
   validation_messages = {
     'name': [
@@ -36,20 +36,17 @@ export class HomePage implements OnInit {
       { type: 'pattern', message: 'DNI debe estar formado por 8 números seguido de una letra' },
       { type: 'validDni', message: 'El DNI introducido no es válido' }
     ],
-    'validations_form': [
-      { type: 'validarUsuario', message: 'Debe introducir el DNI al ser mayor de edad' }
+    'grupoDatosUsuario': [
+      { type: 'validarGrupoDatosUsuario', message: 'Debe introducir el DNI al ser mayor de edad' }
     ]
-  }
-
-
+  };
 
   constructor(
     public formBuilder: FormBuilder,
-    private navCtrl: NavController,
-  ) { this.myDate = new Date() }
+    private navCtrl: NavController) { }
 
   ngOnInit() {
-    this.validations_form = new FormGroup({
+    this.grupoDatosUsuario = new FormGroup({
       name: new FormControl('', Validators.compose([
         Validators.minLength(2),
         Validators.pattern('^[A-Za-z ]*$'),
@@ -65,15 +62,14 @@ export class HomePage implements OnInit {
         this.validDNI,
         Validators.maxLength(9),
         Validators.minLength(9),
-        Validators.pattern('[0-9]{8}[A-Za-z]{1}'),
-        Validators.required
+        Validators.pattern('[0-9]{8}[A-Za-z]{1}')
       ])),
     }, (formGroup: FormGroup) => {
-      return this.validarUsuario(formGroup);
+      return this.validarGrupoDatosUsuario(formGroup);
     });
 
-    this.dni_validation = this.formBuilder.group({
-      validations_form: this.validations_form
+    this.formulario = this.formBuilder.group({
+      grupoDatosUsuario: this.grupoDatosUsuario
     });
   }
 
@@ -81,10 +77,11 @@ export class HomePage implements OnInit {
     console.log(values);
 
     let usuario: Usuario;
-    usuario = new Usuario(values['validations_form']['name'],
-      values['validations_form']['lastname'],
-      values['validations_form']['birthday'],
-      values['validations_form']['dni']);
+    usuario = new Usuario(values['grupoDatosUsuario']['name'],
+      values['grupoDatosUsuario']['lastname'],
+      values['grupoDatosUsuario']['birthday'],
+      values['grupoDatosUsuario']['dni']
+      );
 
     let navigationExtras: NavigationExtras = {
       queryParams: {
@@ -96,6 +93,10 @@ export class HomePage implements OnInit {
   }
 
   validDNI(fc: FormControl) {
+
+    if(fc.value==''){
+      return null;
+    }
 
     var numeros = fc.value.substring(0, fc.value.length - 1);
     var numero = numeros % 23;
@@ -111,24 +112,24 @@ export class HomePage implements OnInit {
 
   }
 
-  validarUsuario(fg: FormGroup) {
+  validarGrupoDatosUsuario(fg: FormGroup) {
 
-    var fechaNacimiento: Date = fg.controls['myDate'].value;
-    var fechaActual = Math.abs(Date.now() - fechaNacimiento.getTime());
-    var edad = Math.floor((fechaActual / (1000 * 3600 * 24)) / 365);
+    var fechaNacimiento: string = fg.controls['birthday'].value;
+    var edad : number;
     var dni: string = fg.controls['dni'].value;
 
-    console.log(edad);
-
-    if(!fechaNacimiento){
-      return {validarUsuario: true};
+    if (!fechaNacimiento) {
+      return { validarGrupoDatosUsuario: true };
     }
+
+    edad = moment().diff(fechaNacimiento, 'years');
+    console.log(edad);
 
     if (edad < 18) {
       return null;
     } else {
       if (dni == '') {
-        return { validarUsuario: true };
+        return { validarGrupoDatosUsuario: true };
       } else {
         return null;
       }
